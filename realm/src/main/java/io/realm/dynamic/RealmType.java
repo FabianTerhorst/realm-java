@@ -21,7 +21,7 @@ import java.nio.ByteBuffer;
 import io.realm.internal.Mixed;
 
 /**
- * List of the types used by Realms underlying storage engine.
+ * List of the types used by Realm's underlying storage engine.
  *
  * Normally there is no reason to interact with the underlying Realm types as Realm will automatically
  * convert between normal Java types and the Realm types. However it is possible to access these
