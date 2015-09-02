@@ -34,8 +34,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import io.realm.BuildConfig;
+import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmConfiguration;
+import io.realm.RealmMigration;
+import io.realm.exceptions.RealmMigrationNeededException;
+import io.realm.internal.ColumnType;
 import io.realm.internal.RealmProxyMediator;
 import io.realm.internal.SharedGroup;
 import io.realm.internal.SharedGroupManager;
@@ -440,6 +444,16 @@ public abstract class BaseRealm implements Closeable {
         globalRealmFileReferenceCounter.put(canonicalPath, refCount - 1);
     }
 
+    // package protected so unit tests can access it
+    protected void setVersion(long version) {
+        Table metadataTable = sharedGroupManager.getTable("metadata");
+        if (metadataTable.getColumnCount() == 0) {
+            metadataTable.addColumn(ColumnType.INTEGER, "version");
+            metadataTable.addEmptyRow();
+        }
+        metadataTable.setLong(0, 0, version);
+    }
+
     /**
      * Make sure that the new configuration doesn't clash with any existing configurations for the
      * Realm.
@@ -486,6 +500,78 @@ public abstract class BaseRealm implements Closeable {
         }
     }
 
+    /**
+     * Deletes the Realm file defined by the given configuration.
+     */
+    protected static synchronized boolean deleteRealm(RealmConfiguration configuration) {
+        if (isFileOpen(configuration)) {
+            throw new IllegalStateException("It's not allowed to delete the file associated with an open Realm. " +
+                    "Remember to close() all the instances of the Realm before deleting its file.");
+        }
+
+        boolean realmDeleted = true;
+        String canonicalPath = configuration.getPath();
+        File realmFolder = configuration.getRealmFolder();
+        String realmFileName = configuration.getRealmFileName();
+        List<File> filesToDelete = Arrays.asList(new File(canonicalPath),
+                new File(realmFolder, realmFileName + ".lock"),
+                new File(realmFolder, realmFileName + ".lock_a"),
+                new File(realmFolder, realmFileName + ".lock_b"),
+                new File(realmFolder, realmFileName + ".log"));
+        for (File fileToDelete : filesToDelete) {
+            if (fileToDelete.exists()) {
+                boolean deleteResult = fileToDelete.delete();
+                if (!deleteResult) {
+                    realmDeleted = false;
+                    RealmLog.w("Could not delete the file " + fileToDelete);
+                }
+            }
+        }
+
+        return realmDeleted;
+    }
+
+    /**
+     * Compacts the Realm file defined by the given configuration.
+     */
+    public static boolean compactRealm(RealmConfiguration configuration) {
+        if (configuration.getEncryptionKey() != null) {
+            throw new IllegalArgumentException("Cannot currently compact an encrypted Realm.");
+        }
+
+        if (isFileOpen(configuration)) {
+            throw new IllegalStateException("Cannot compact an open Realm");
+        }
+
+        return SharedGroupManager.compact(configuration);
+    }
+
+    /**
+     * Migrates the Realm file defined by the given configuration using the provided migration block.
+     */
+    public synchronized static void migrateRealm(RealmConfiguration configuration, RealmMigration migration, MigrationCallback callback) {
+        if (configuration == null) {
+            throw new IllegalArgumentException("RealmConfiguration must be provided");
+        }
+        if (migration == null && configuration.getMigration() == null) {
+            throw new RealmMigrationNeededException(configuration.getPath(), "RealmMigration must be provided");
+        }
+
+        RealmMigration realmMigration = (migration == null) ? configuration.getMigration() : migration;
+        BaseRealm realm = null;
+        try {
+            realm = callback.getRealm(configuration);
+            realm.beginTransaction();
+            realm.setVersion(realmMigration.execute((Realm) realm, realm.getVersion())); // FIXME Remove cast with new migration API
+            realm.commitTransaction();
+        } finally {
+            if (realm != null) {
+                realm.close();
+                callback.migrationComplete();
+            }
+        }
+    }
+
     // Internal Handler callback for Realm messages
     private class RealmCallback implements Handler.Callback {
         @Override
@@ -498,4 +584,9 @@ public abstract class BaseRealm implements Closeable {
         }
     }
 
+    // Internal delegate for migrations
+    protected interface MigrationCallback {
+        BaseRealm getRealm(RealmConfiguration configuration);
+        void migrationComplete();
+    }
 }

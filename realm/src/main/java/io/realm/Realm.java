@@ -35,7 +35,6 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,10 +46,8 @@ import io.realm.exceptions.RealmException;
 import io.realm.exceptions.RealmIOException;
 import io.realm.exceptions.RealmMigrationNeededException;
 import io.realm.internal.ColumnIndices;
-import io.realm.internal.ColumnType;
 import io.realm.internal.RealmObjectProxy;
 import io.realm.internal.RealmProxyMediator;
-import io.realm.internal.SharedGroupManager;
 import io.realm.internal.Table;
 import io.realm.internal.TableView;
 import io.realm.internal.UncheckedRow;
@@ -986,16 +983,6 @@ public final class Realm extends BaseRealm {
         return null;
     }
 
-    // package protected so unit tests can access it
-    void setVersion(long version) {
-        Table metadataTable = sharedGroupManager.getTable("metadata");
-        if (metadataTable.getColumnCount() == 0) {
-            metadataTable.addColumn(ColumnType.INTEGER, "version");
-            metadataTable.addEmptyRow();
-        }
-        metadataTable.setLong(0, 0, version);
-    }
-
     @SuppressWarnings("unchecked")
     private <E extends RealmObject> Class<? extends RealmObject> getRealmClassFromObject(E object) {
         if (object.realm != null) {
@@ -1061,27 +1048,19 @@ public final class Realm extends BaseRealm {
      * @param migration {@link RealmMigration} to run on the Realm. This will override any migration set on the
      * configuration.
      */
-    public synchronized static void migrateRealm(RealmConfiguration configuration, RealmMigration migration) {
-        if (configuration == null) {
-            throw new IllegalArgumentException("RealmConfiguration must be provided");
-        }
-        if (migration == null && configuration.getMigration() == null) {
-            throw new RealmMigrationNeededException(configuration.getPath(), "RealmMigration must be provided");
-        }
+    public static void migrateRealm(RealmConfiguration configuration, RealmMigration migration) {
+        BaseRealm.migrateRealm(configuration, migration, new MigrationCallback() {
 
-        RealmMigration realmMigration = (migration == null) ? configuration.getMigration() : migration;
-        Realm realm = null;
-        try {
-            realm = Realm.createAndValidate(configuration, false, Looper.myLooper() != null);
-            realm.beginTransaction();
-            realm.setVersion(realmMigration.execute(realm, realm.getVersion()));
-            realm.commitTransaction();
-        } finally {
-            if (realm != null) {
-                realm.close();
+            @Override
+            public BaseRealm getRealm(RealmConfiguration configuration) {
+                return Realm.createAndValidate(configuration, false, Looper.myLooper() != null);
+           }
+
+            @Override
+            public void migrationComplete() {
                 realmsCache.remove();
             }
-        }
+        });
     }
 
     /**
@@ -1093,32 +1072,8 @@ public final class Realm extends BaseRealm {
      *
      * @throws java.lang.IllegalStateException if trying to delete a Realm that is already open.
      */
-    public static synchronized boolean deleteRealm(RealmConfiguration configuration) {
-        if (isFileOpen(configuration)) {
-            throw new IllegalStateException("It's not allowed to delete the file associated with an open Realm. " +
-                    "Remember to close() all the instances of the Realm before deleting its file.");
-        }
-
-        boolean realmDeleted = true;
-        String canonicalPath = configuration.getPath();
-        File realmFolder = configuration.getRealmFolder();
-        String realmFileName = configuration.getRealmFileName();
-        List<File> filesToDelete = Arrays.asList(new File(canonicalPath),
-                new File(realmFolder, realmFileName + ".lock"),
-                new File(realmFolder, realmFileName + ".lock_a"),
-                new File(realmFolder, realmFileName + ".lock_b"),
-                new File(realmFolder, realmFileName + ".log"));
-        for (File fileToDelete : filesToDelete) {
-            if (fileToDelete.exists()) {
-                boolean deleteResult = fileToDelete.delete();
-                if (!deleteResult) {
-                    realmDeleted = false;
-                    RealmLog.w("Could not delete the file " + fileToDelete);
-                }
-            }
-        }
-
-        return realmDeleted;
+    public static boolean deleteRealm(RealmConfiguration configuration) {
+        return BaseRealm.deleteRealm(configuration);
     }
 
     /**
@@ -1136,15 +1091,7 @@ public final class Realm extends BaseRealm {
      * @throws java.lang.IllegalStateException if trying to compact a Realm that is already open.
      */
     public static boolean compactRealm(RealmConfiguration configuration) {
-        if (configuration.getEncryptionKey() != null) {
-            throw new IllegalArgumentException("Cannot currently compact an encrypted Realm.");
-        }
-
-        if (isFileOpen(configuration)) {
-            throw new IllegalStateException("Cannot compact an open Realm");
-        }
-
-        return SharedGroupManager.compact(configuration);
+        return BaseRealm.compactRealm(configuration);
     }
 
     // Get the canonical path for a given file
