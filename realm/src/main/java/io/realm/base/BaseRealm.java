@@ -533,7 +533,7 @@ public abstract class BaseRealm implements Closeable {
     /**
      * Compacts the Realm file defined by the given configuration.
      */
-    public static boolean compactRealm(RealmConfiguration configuration) {
+    public static synchronized boolean compactRealm(RealmConfiguration configuration) {
         if (configuration.getEncryptionKey() != null) {
             throw new IllegalArgumentException("Cannot currently compact an encrypted Realm.");
         }
@@ -548,7 +548,7 @@ public abstract class BaseRealm implements Closeable {
     /**
      * Migrates the Realm file defined by the given configuration using the provided migration block.
      */
-    public synchronized static void migrateRealm(RealmConfiguration configuration, RealmMigration migration, MigrationCallback callback) {
+    public static synchronized void migrateRealm(RealmConfiguration configuration, RealmMigration migration, MigrationCallback callback) {
         if (configuration == null) {
             throw new IllegalArgumentException("RealmConfiguration must be provided");
         }
