@@ -17,6 +17,8 @@
 
 package io.realm.internal;
 
+import io.realm.dynamic.RealmType;
+
 /**
  * Checked wrapper for Row data in Realm Core. All methods called through this will check that input parameters are
  * valid or throw an appropriate exception.
@@ -78,8 +80,8 @@ public class CheckedRow extends UncheckedRow {
 
     @Override
     public boolean isNullLink(long columnIndex) {
-        ColumnType columnType = getColumnType(columnIndex);
-        if (columnType == ColumnType.LINK || columnType == ColumnType.LINK_LIST) {
+        RealmType columnType = getColumnType(columnIndex);
+        if (columnType == RealmType.LINK || columnType == RealmType.LINK_LIST) {
             return super.isNullLink(columnIndex);
         } else {
             return false; // Unsupported types always return false

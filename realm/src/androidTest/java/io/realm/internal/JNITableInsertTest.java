@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import io.realm.dynamic.RealmType;
 import io.realm.internal.test.TestHelper;
 
 
@@ -79,19 +80,19 @@ public class JNITableInsertTest extends TestCase {
     public void testShouldInsertAddAndSetRows() {
         Table table = new Table();
         TableSpec tableSpec = new TableSpec();
-        tableSpec.addColumn(ColumnType.BOOLEAN, "bool");
-        tableSpec.addColumn(ColumnType.INTEGER, "number");
-        tableSpec.addColumn(ColumnType.STRING, "string");
-        tableSpec.addColumn(ColumnType.BINARY, "Bin");
-        tableSpec.addColumn(ColumnType.DATE, "date");
-        tableSpec.addColumn(ColumnType.MIXED, "mix");
+        tableSpec.addColumn(RealmType.BOOLEAN, "bool");
+        tableSpec.addColumn(RealmType.INTEGER, "number");
+        tableSpec.addColumn(RealmType.STRING, "string");
+        tableSpec.addColumn(RealmType.BINARY, "Bin");
+        tableSpec.addColumn(RealmType.DATE, "date");
+        tableSpec.addColumn(RealmType.MIXED, "mix");
         TableSpec subspec = tableSpec.addSubtableColumn("sub");
-        subspec.addColumn(ColumnType.INTEGER, "sub-num");
-        subspec.addColumn(ColumnType.STRING, "sub-str");
+        subspec.addColumn(RealmType.INTEGER, "sub-num");
+        subspec.addColumn(RealmType.STRING, "sub-str");
         table.updateFromSpec(tableSpec);
 
         byte[] buf = new byte[23];
-        Mixed mixedSubtable = new Mixed(ColumnType.TABLE);
+        Mixed mixedSubtable = new Mixed(RealmType.TABLE);
         Date date = new Date();
         long mixed = 123;
 
@@ -139,8 +140,8 @@ public class JNITableInsertTest extends TestCase {
 
     public void testAddAtMethod() {
         Table t = new Table();
-        t.addColumn(ColumnType.STRING, "col1");
-        t.addColumn(ColumnType.INTEGER, "col2");
+        t.addColumn(RealmType.STRING, "col1");
+        t.addColumn(RealmType.INTEGER, "col2");
 
         t.add("s1", 1);
         t.add("s2", 2);
@@ -153,14 +154,14 @@ public class JNITableInsertTest extends TestCase {
     public void testShouldFailInsert() {
         Table table = new Table();
         TableSpec tableSpec = new TableSpec();
-        tableSpec.addColumn(ColumnType.BOOLEAN, "bool");
-        tableSpec.addColumn(ColumnType.INTEGER, "number");
-        tableSpec.addColumn(ColumnType.STRING, "string");
-        tableSpec.addColumn(ColumnType.BINARY, "Bin");
-        tableSpec.addColumn(ColumnType.DATE, "date");
-        tableSpec.addColumn(ColumnType.MIXED, "mix");
+        tableSpec.addColumn(RealmType.BOOLEAN, "bool");
+        tableSpec.addColumn(RealmType.INTEGER, "number");
+        tableSpec.addColumn(RealmType.STRING, "string");
+        tableSpec.addColumn(RealmType.BINARY, "Bin");
+        tableSpec.addColumn(RealmType.DATE, "date");
+        tableSpec.addColumn(RealmType.MIXED, "mix");
         TableSpec subspec = tableSpec.addSubtableColumn("sub");
-        subspec.addColumn(ColumnType.INTEGER, "sub-num");
+        subspec.addColumn(RealmType.INTEGER, "sub-num");
         table.updateFromSpec(tableSpec);
 
         // Wrong number of parameters
@@ -249,8 +250,8 @@ public class JNITableInsertTest extends TestCase {
     public void testIncrementInColumnTest() {
 
         Table table = new Table();
-        table.addColumn(ColumnType.STRING, "col0");
-        table.addColumn(ColumnType.INTEGER, "col1");
+        table.addColumn(RealmType.STRING, "col0");
+        table.addColumn(RealmType.INTEGER, "col1");
 
         table.add("row0", 0);
         table.add("row1", 10);
@@ -274,7 +275,7 @@ public class JNITableInsertTest extends TestCase {
 
         for (long c = 0; c < table.getColumnCount(); c++) {
 
-            if (table.getColumnType(c).equals(ColumnType.INTEGER) == false) { // Do not check if it is a Long column
+            if (table.getColumnType(c).equals(RealmType.INTEGER) == false) { // Do not check if it is a Long column
                 try {
                     table.adjust(c, 10);
                     assertTrue(false); //We should never get here, as an exception is thrown above
@@ -289,7 +290,7 @@ public class JNITableInsertTest extends TestCase {
 
         Table table = new Table();
         try {
-            table.addColumn(ColumnType.STRING, "THIS STRING HAS 64 CHARACTERS, "
+            table.addColumn(RealmType.STRING, "THIS STRING HAS 64 CHARACTERS, "
                     + "LONGER THAN THE MAX 63 CHARACTERS");
             fail("Too long name");
         } catch (IllegalArgumentException e) {
@@ -299,7 +300,7 @@ public class JNITableInsertTest extends TestCase {
     public void testWhenColumnNameIsExcactly63CharLong() {
 
         Table table = new Table();
-        table.addColumn(ColumnType.STRING, "THIS STRING HAS 63 CHARACTERS PERFECT FOR THE MAX 63 CHARACTERS");
+        table.addColumn(RealmType.STRING, "THIS STRING HAS 63 CHARACTERS PERFECT FOR THE MAX 63 CHARACTERS");
     }
 
     public void testGenericAddOnTable() {

@@ -19,18 +19,20 @@ package io.realm.internal;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.dynamic.RealmType;
+
 public class TableSpec {
 
     public static class ColumnInfo {
 
-        protected final ColumnType type;
+        protected final RealmType type;
         protected final String name;
         protected final TableSpec tableSpec;
 
-        public ColumnInfo(ColumnType type, String name) {
+        public ColumnInfo(RealmType type, String name) {
             this.name = name;
             this.type = type;
-            this.tableSpec = (type == ColumnType.TABLE) ? new TableSpec() : null;
+            this.tableSpec = (type == RealmType.TABLE) ? new TableSpec() : null;
         }
 
         @Override
@@ -74,7 +76,7 @@ public class TableSpec {
         columnInfos = new ArrayList<ColumnInfo>();
     }
 
-    public void addColumn(ColumnType type, String name) {
+    public void addColumn(RealmType type, String name) {
         if (name.length() > 63) {
             throw new IllegalArgumentException("Column names are currently limited to max 63 characters.");
         }
@@ -82,14 +84,14 @@ public class TableSpec {
     }
 
     protected void addColumn(int colTypeIndex, String name) {
-        addColumn(ColumnType.fromNativeValue(colTypeIndex), name);
+        addColumn(RealmType.fromNativeValue(colTypeIndex), name);
     }
 
     public TableSpec addSubtableColumn(String name) {
         if (name.length() > 63) {
             throw new IllegalArgumentException("Column names are currently limited to max 63 characters.");
         }
-        ColumnInfo columnInfo = new ColumnInfo(ColumnType.TABLE, name);
+        ColumnInfo columnInfo = new ColumnInfo(RealmType.TABLE, name);
         columnInfos.add(columnInfo);
         return columnInfo.tableSpec;
     }
@@ -102,7 +104,7 @@ public class TableSpec {
         return columnInfos.size();
     }
 
-    public ColumnType getColumnType(long columnIndex) {
+    public RealmType getColumnType(long columnIndex) {
         return columnInfos.get((int) columnIndex).type;
     }
 

@@ -15,13 +15,13 @@
  */
 package io.realm.internal.test;
 
-import io.realm.internal.ColumnType;
+import io.realm.dynamic.RealmType;
 
 public class ColumnTypeData {
 
-    public ColumnType type;
+    public RealmType type;
 
-    public ColumnTypeData(ColumnType type) {
+    public ColumnTypeData(RealmType type) {
         this.type = type;
     }
 }

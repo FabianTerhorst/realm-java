@@ -3,8 +3,8 @@ package io.realm.internal.test;
 import java.util.Date;
 
 import io.realm.Realm;
+import io.realm.dynamic.RealmType;
 import io.realm.entities.AllTypes;
-import io.realm.internal.ColumnType;
 import io.realm.internal.Table;
 
 
@@ -20,24 +20,24 @@ public class TestHelper {
      * @param o
      * @return
      */
-    public static ColumnType getColumnType(Object o){
+    public static RealmType getColumnType(Object o){
 
         if (o instanceof Boolean)
-            return ColumnType.BOOLEAN;
+            return RealmType.BOOLEAN;
         if (o instanceof String)
-            return ColumnType.STRING;
+            return RealmType.STRING;
         if (o instanceof Long)
-            return ColumnType.INTEGER;
+            return RealmType.INTEGER;
         if (o instanceof Float)
-            return ColumnType.FLOAT;
+            return RealmType.FLOAT;
         if (o instanceof Double)
-            return ColumnType.DOUBLE;
+            return RealmType.DOUBLE;
         if (o instanceof Date)
-            return ColumnType.DATE;
+            return RealmType.DATE;
         if (o instanceof byte[])
-            return ColumnType.BINARY;
+            return RealmType.BINARY;
 
-        return ColumnType.MIXED;
+        return RealmType.MIXED;
     }
 
 
@@ -49,15 +49,15 @@ public class TestHelper {
 
         Table t = new Table();
 
-        t.addColumn(ColumnType.BINARY, "binary");
-        t.addColumn(ColumnType.BOOLEAN, "boolean");
-        t.addColumn(ColumnType.DATE, "date");
-        t.addColumn(ColumnType.DOUBLE, "double");
-        t.addColumn(ColumnType.FLOAT, "float");
-        t.addColumn(ColumnType.INTEGER, "long");
-        t.addColumn(ColumnType.MIXED, "mixed");
-        t.addColumn(ColumnType.STRING, "string");
-        t.addColumn(ColumnType.TABLE, "table");
+        t.addColumn(RealmType.BINARY, "binary");
+        t.addColumn(RealmType.BOOLEAN, "boolean");
+        t.addColumn(RealmType.DATE, "date");
+        t.addColumn(RealmType.DOUBLE, "double");
+        t.addColumn(RealmType.FLOAT, "float");
+        t.addColumn(RealmType.INTEGER, "long");
+        t.addColumn(RealmType.MIXED, "mixed");
+        t.addColumn(RealmType.STRING, "string");
+        t.addColumn(RealmType.TABLE, "table");
 
         return t;
     }

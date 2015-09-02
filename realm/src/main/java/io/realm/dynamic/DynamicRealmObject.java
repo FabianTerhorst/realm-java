@@ -20,7 +20,6 @@ import java.util.Date;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.internal.CheckedRow;
-import io.realm.internal.ColumnType;
 import io.realm.internal.InvalidRow;
 import io.realm.internal.LinkView;
 import io.realm.internal.Row;
@@ -218,7 +217,7 @@ public class DynamicRealmObject extends RealmObject {
      */
     public boolean isNull(String fieldName) {
         long columnIndex = row.getColumnIndex(fieldName);
-        ColumnType type = row.getColumnType(columnIndex);
+        RealmType type = row.getColumnType(columnIndex);
         switch (type) {
             case LINK:
             case LINK_LIST:
@@ -494,7 +493,7 @@ public class DynamicRealmObject extends RealmObject {
         String[] fields = getFieldNames();
         for (String field : fields) {
             long columnIndex = row.getColumnIndex(field);
-            ColumnType type = row.getColumnType(columnIndex);
+            RealmType type = row.getColumnType(columnIndex);
             sb.append("{");
             switch (type) {
                 case BOOLEAN: sb.append(field + ": " + row.getBoolean(columnIndex)); break;

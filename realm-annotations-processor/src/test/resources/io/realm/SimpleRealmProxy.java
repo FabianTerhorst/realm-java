@@ -6,7 +6,7 @@ import android.util.JsonToken;
 import io.realm.RealmObject;
 import io.realm.exceptions.RealmException;
 import io.realm.exceptions.RealmMigrationNeededException;
-import io.realm.internal.ColumnType;
+import io.realm.dynamic.RealmType;
 import io.realm.internal.ImplicitTransaction;
 import io.realm.internal.LinkView;
 import io.realm.internal.RealmObjectProxy;
@@ -67,8 +67,8 @@ public class SimpleRealmProxy extends Simple
     public static Table initTable(ImplicitTransaction transaction) {
         if (!transaction.hasTable("class_Simple")) {
             Table table = transaction.getTable("class_Simple");
-            table.addColumn(ColumnType.STRING, "name");
-            table.addColumn(ColumnType.INTEGER, "age");
+            table.addColumn(RealmType.STRING, "name");
+            table.addColumn(RealmType.INTEGER, "age");
             table.setPrimaryKey("");
             return table;
         }
@@ -102,13 +102,13 @@ public class SimpleRealmProxy extends Simple
             if (!columnTypes.containsKey("name")) {
                 throw new RealmMigrationNeededException(transaction.getPath(), "Missing field 'name'");
             }
-            if (columnTypes.get("name") != ColumnType.STRING) {
+            if (columnTypes.get("name") != RealmType.STRING) {
                 throw new RealmMigrationNeededException(transaction.getPath(), "Invalid type 'String' for field 'name'");
             }
             if (!columnTypes.containsKey("age")) {
                 throw new RealmMigrationNeededException(transaction.getPath(), "Missing field 'age'");
             }
-            if (columnTypes.get("age") != ColumnType.INTEGER) {
+            if (columnTypes.get("age") != RealmType.INTEGER) {
                 throw new RealmMigrationNeededException(transaction.getPath(), "Invalid type 'int' for field 'age'");
             }
         } else {

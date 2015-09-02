@@ -2,13 +2,15 @@ package io.realm.internal;
 
 import junit.framework.TestCase;
 
+import io.realm.dynamic.RealmType;
+
 public class TableIndexAndDistinctTest extends TestCase {
     Table table;
 
     void init() {
         table = new Table();
-        table.addColumn(ColumnType.INTEGER, "number");
-        table.addColumn(ColumnType.STRING, "name");
+        table.addColumn(RealmType.INTEGER, "number");
+        table.addColumn(RealmType.STRING, "name");
 
         long i = 0;
         table.add(0, "A");
@@ -70,11 +72,11 @@ public class TableIndexAndDistinctTest extends TestCase {
 
         //Create a table only with String type columns
         Table t = new Table();
-        t.addColumn(ColumnType.STRING, "col1");
-        t.addColumn(ColumnType.STRING, "col2");
-        t.addColumn(ColumnType.STRING, "col3");
-        t.addColumn(ColumnType.STRING, "col4");
-        t.addColumn(ColumnType.STRING, "col5");
+        t.addColumn(RealmType.STRING, "col1");
+        t.addColumn(RealmType.STRING, "col2");
+        t.addColumn(RealmType.STRING, "col3");
+        t.addColumn(RealmType.STRING, "col4");
+        t.addColumn(RealmType.STRING, "col5");
         t.add("row1", "row2", "row3", "row4", "row5");
         t.add("row1", "row2", "row3", "row4", "row5");
         t.add("row1", "row2", "row3", "row4", "row5");
@@ -101,7 +103,7 @@ public class TableIndexAndDistinctTest extends TestCase {
         Table t = TestHelper.getTableWithAllColumnTypes();
 
         //If column type is String, then throw the excepted exception
-        if (t.getColumnType(index).equals(ColumnType.STRING)){
+        if (t.getColumnType(index).equals(RealmType.STRING)){
             throw new IllegalArgumentException();
         }
 

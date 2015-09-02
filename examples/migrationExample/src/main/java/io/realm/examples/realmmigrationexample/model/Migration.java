@@ -18,7 +18,7 @@ package io.realm.examples.realmmigrationexample.model;
 
 import io.realm.Realm;
 import io.realm.RealmMigration;
-import io.realm.internal.ColumnType;
+import io.realm.dynamic.RealmType;
 import io.realm.internal.Table;
 
 /***************************** NOTE: *********************************************
@@ -52,7 +52,7 @@ public class Migration implements RealmMigration {
 
             long fistNameIndex = getIndexForProperty(personTable, "firstName");
             long lastNameIndex = getIndexForProperty(personTable, "lastName");
-            long fullNameIndex = personTable.addColumn(ColumnType.STRING, "fullName");
+            long fullNameIndex = personTable.addColumn(RealmType.STRING, "fullName");
             for (int i = 0; i < personTable.size(); i++) {
                 personTable.setString(fullNameIndex, i, personTable.getString(fistNameIndex, i) + " " +
                         personTable.getString(lastNameIndex, i));
@@ -78,9 +78,9 @@ public class Migration implements RealmMigration {
         if (version == 1) {
             Table personTable = realm.getTable(Person.class);
             Table petTable = realm.getTable(Pet.class);
-            petTable.addColumn(ColumnType.STRING, "name");
-            petTable.addColumn(ColumnType.STRING, "type");
-            long petsIndex = personTable.addColumnLink(ColumnType.LINK_LIST, "pets", petTable);
+            petTable.addColumn(RealmType.STRING, "name");
+            petTable.addColumn(RealmType.STRING, "type");
+            long petsIndex = personTable.addColumnLink(RealmType.LINK_LIST, "pets", petTable);
             long fullNameIndex = getIndexForProperty(personTable, "fullName");
 
             for (int i = 0; i < personTable.size(); i++) {
@@ -106,7 +106,7 @@ public class Migration implements RealmMigration {
         if (version == 2) {
             Table petTable = realm.getTable(Pet.class);
             long oldTypeIndex = getIndexForProperty(petTable, "type");
-            long typeIndex = petTable.addColumn(ColumnType.INTEGER, "type");
+            long typeIndex = petTable.addColumn(RealmType.INTEGER, "type");
             for (int i = 0; i < petTable.size(); i++) {
                 String type = petTable.getString(oldTypeIndex, i);
                 if (type.equals("dog")) {

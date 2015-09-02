@@ -20,6 +20,7 @@ import java.io.Closeable;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.realm.dynamic.RealmType;
 import io.realm.exceptions.RealmException;
 
 
@@ -167,9 +168,9 @@ public class Table implements TableOrView, TableSchema, Closeable {
      * @return Index of the new column.
      */
     @Override
-    public long addColumn (ColumnType type, String name) {
+    public long addColumn (RealmType type, String name) {
         verifyColumnName(name);
-        return nativeAddColumn(nativePtr, type.getValue(), name);
+        return nativeAddColumn(nativePtr, type.getNativeValue(), name);
     }
 
     protected native long nativeAddColumn(long nativeTablePtr, int type, String name);
@@ -178,9 +179,9 @@ public class Table implements TableOrView, TableSchema, Closeable {
      * Add a link column to the table dynamically.
      * @return Index of the new column.
      */
-    public long addColumnLink (ColumnType type, String name, Table table) {
+    public long addColumnLink (RealmType type, String name, Table table) {
         verifyColumnName(name);
-        return nativeAddColumnLink(nativePtr, type.getValue(), name, table.nativePtr);
+        return nativeAddColumnLink(nativePtr, type.getNativeValue(), name, table.nativePtr);
     }
 
     protected native long nativeAddColumnLink(long nativeTablePtr, int type, String name, long targetTablePtr);
@@ -310,8 +311,8 @@ public class Table implements TableOrView, TableSchema, Closeable {
      * @return Type of the particular column.
      */
     @Override
-    public ColumnType getColumnType(long columnIndex) {
-        return ColumnType.fromNativeValue(nativeGetColumnType(nativePtr, columnIndex));
+    public RealmType getColumnType(long columnIndex) {
+        return RealmType.fromNativeValue(nativeGetColumnType(nativePtr, columnIndex));
     }
 
     protected native int nativeGetColumnType(long nativeTablePtr, long columnIndex);
@@ -350,7 +351,7 @@ public class Table implements TableOrView, TableSchema, Closeable {
         checkImmutable();
         if (hasPrimaryKey()) {
             long primaryKeyColumnIndex = getPrimaryKey();
-            ColumnType type = getColumnType(primaryKeyColumnIndex);
+            RealmType type = getColumnType(primaryKeyColumnIndex);
             switch (type) {
                 case STRING:
                     if (findFirstString(primaryKeyColumnIndex, STRING_DEFAULT_VALUE) != NO_MATCH) {
@@ -376,7 +377,7 @@ public class Table implements TableOrView, TableSchema, Closeable {
         checkHasPrimaryKey();
         
         long primaryKeyColumnIndex = getPrimaryKey();
-        ColumnType type = getColumnType(primaryKeyColumnIndex);
+        RealmType type = getColumnType(primaryKeyColumnIndex);
         long rowIndex;
         UncheckedRow row;
 
@@ -468,18 +469,19 @@ public class Table implements TableOrView, TableSchema, Closeable {
                     ") does not match the number of columns in the table (" +
                     String.valueOf(columns) + ").");
         }
-        ColumnType colTypes[] = new ColumnType[columns];
+        RealmType colTypes[] = new RealmType[columns];
         for (int columnIndex = 0; columnIndex < columns; columnIndex++) {
             Object value = values[columnIndex];
-            ColumnType colType = getColumnType(columnIndex);
+            RealmType colType = getColumnType(columnIndex);
             colTypes[columnIndex] = colType;
-            if (!colType.matchObject(value)) {
+            if (!colType.isValid(value)) {
                 //String representation of the provided value type
                 String providedType;
-                if (value == null)
+                if (value == null) {
                     providedType = "null";
-                else
+                } else {
                     providedType = value.getClass().toString();
+                }
 
                 throw new IllegalArgumentException("Invalid argument no " + String.valueOf(1 + columnIndex) +
                         ". Expected a value compatible with column type " + colType + ", but got " + providedType + ".");
@@ -624,8 +626,8 @@ public class Table implements TableOrView, TableSchema, Closeable {
         // Verify type of 'values'
         for (int columnIndex = 0; columnIndex < columns; columnIndex++) {
             Object value = values[columnIndex];
-            ColumnType colType = getColumnType(columnIndex);
-            if (!colType.matchObject(value)) {
+            RealmType colType = getColumnType(columnIndex);
+            if (!colType.isValid(value)) {
                 throw new IllegalArgumentException("Invalid argument no " + String.valueOf(1 + columnIndex) +
                         ". Expected a value compatible with column type " + colType + ", but got " + value.getClass() + ".");
             }
@@ -899,8 +901,8 @@ public class Table implements TableOrView, TableSchema, Closeable {
     }
 
     @Override
-    public ColumnType getMixedType(long columnIndex, long rowIndex) {
-        return ColumnType.fromNativeValue(nativeGetMixedType(nativePtr, columnIndex, rowIndex));
+    public RealmType getMixedType(long columnIndex, long rowIndex) {
+        return RealmType.fromNativeValue(nativeGetMixedType(nativePtr, columnIndex, rowIndex));
     }
 
     protected native int nativeGetMixedType(long nativePtr, long columnIndex, long rowIndex);
@@ -1190,8 +1192,8 @@ public class Table implements TableOrView, TableSchema, Closeable {
 
         Table pkTable = group.getTable(PRIMARY_KEY_TABLE_NAME);
         if (pkTable.getColumnCount() == 0) {
-            pkTable.addColumn(ColumnType.STRING, PRIMARY_KEY_CLASS_COLUMN_NAME);
-            pkTable.addColumn(ColumnType.STRING, PRIMARY_KEY_FIELD_COLUMN_NAME);
+            pkTable.addColumn(RealmType.STRING, PRIMARY_KEY_CLASS_COLUMN_NAME);
+            pkTable.addColumn(RealmType.STRING, PRIMARY_KEY_FIELD_COLUMN_NAME);
         } else {
             migratePrimaryKeyTableIfNeeded(group, pkTable);
         }
@@ -1575,9 +1577,9 @@ public class Table implements TableOrView, TableSchema, Closeable {
     
     @Override
     public Table pivot(long stringCol, long intCol, PivotType pivotType){
-        if (! this.getColumnType(stringCol).equals(ColumnType.STRING ))
+        if (! this.getColumnType(stringCol).equals(RealmType.STRING ))
             throw new UnsupportedOperationException("Group by column must be of type String");
-        if (! this.getColumnType(intCol).equals(ColumnType.INTEGER ))
+        if (! this.getColumnType(intCol).equals(RealmType.INTEGER ))
             throw new UnsupportedOperationException("Aggregation column must be of type Int");
         Table result = new Table();
         nativePivot(nativePtr, stringCol, intCol, pivotType.value, result.nativePtr);
