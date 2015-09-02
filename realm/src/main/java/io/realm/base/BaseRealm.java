@@ -50,7 +50,6 @@ import io.realm.internal.log.RealmLog;
 
 /**
  * Base class for all Realm instances.
- * Specialized Realms do not not share the same underlying native resources.
  *
  * @see io.realm.Realm
  */
