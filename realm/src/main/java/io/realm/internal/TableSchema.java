@@ -17,13 +17,13 @@
 package io.realm.internal;
 
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 
 public interface TableSchema {
 
     TableSchema getSubtableSchema(long columnIndex);
 
-    long addColumn(RealmType type, String name);
+    long addColumn(RealmFieldType type, String name);
 
     void removeColumn(long columnIndex);
 

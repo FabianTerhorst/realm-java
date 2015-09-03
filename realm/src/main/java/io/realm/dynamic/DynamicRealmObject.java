@@ -217,7 +217,7 @@ public class DynamicRealmObject extends RealmObject {
      */
     public boolean isNull(String fieldName) {
         long columnIndex = row.getColumnIndex(fieldName);
-        RealmType type = row.getColumnType(columnIndex);
+        RealmFieldType type = row.getColumnType(columnIndex);
         switch (type) {
             case LINK:
             case LINK_LIST:
@@ -493,7 +493,7 @@ public class DynamicRealmObject extends RealmObject {
         String[] fields = getFieldNames();
         for (String field : fields) {
             long columnIndex = row.getColumnIndex(field);
-            RealmType type = row.getColumnType(columnIndex);
+            RealmFieldType type = row.getColumnType(columnIndex);
             sb.append("{");
             switch (type) {
                 case BOOLEAN: sb.append(field + ": " + row.getBoolean(columnIndex)); break;

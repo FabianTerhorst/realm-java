@@ -4,7 +4,7 @@ package io.realm;
 import android.util.JsonReader;
 import android.util.JsonToken;
 import io.realm.RealmObject;
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 import io.realm.exceptions.RealmException;
 import io.realm.exceptions.RealmMigrationNeededException;
 import io.realm.internal.ImplicitTransaction;
@@ -67,8 +67,8 @@ public class SimpleRealmProxy extends Simple
     public static Table initTable(ImplicitTransaction transaction) {
         if (!transaction.hasTable("class_Simple")) {
             Table table = transaction.getTable("class_Simple");
-            table.addColumn(RealmType.STRING, "name");
-            table.addColumn(RealmType.INTEGER, "age");
+            table.addColumn(RealmFieldType.STRING, "name");
+            table.addColumn(RealmFieldType.INTEGER, "age");
             table.setPrimaryKey("");
             return table;
         }
@@ -83,7 +83,7 @@ public class SimpleRealmProxy extends Simple
                 throw new RealmMigrationNeededException(transaction.getPath(), "Field count does not match - expected 2 but was " + table.getColumnCount());
             }
 
-            Map<String, RealmType> columnTypes = new HashMap<String, RealmType>();
+            Map<String, RealmFieldType> columnTypes = new HashMap<String, RealmFieldType>();
             for (long i = 0; i < 2; i++) {
                 columnTypes.put(table.getColumnName(i), table.getColumnType(i));
             }
@@ -102,13 +102,13 @@ public class SimpleRealmProxy extends Simple
             if (!columnTypes.containsKey("name")) {
                 throw new RealmMigrationNeededException(transaction.getPath(), "Missing field 'name'");
             }
-            if (columnTypes.get("name") != RealmType.STRING) {
+            if (columnTypes.get("name") != RealmFieldType.STRING) {
                 throw new RealmMigrationNeededException(transaction.getPath(), "Invalid type 'String' for field 'name'");
             }
             if (!columnTypes.containsKey("age")) {
                 throw new RealmMigrationNeededException(transaction.getPath(), "Missing field 'age'");
             }
-            if (columnTypes.get("age") != RealmType.INTEGER) {
+            if (columnTypes.get("age") != RealmFieldType.INTEGER) {
                 throw new RealmMigrationNeededException(transaction.getPath(), "Invalid type 'int' for field 'age'");
             }
         } else {

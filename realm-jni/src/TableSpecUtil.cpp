@@ -51,7 +51,7 @@ jlong Java_io_realm_TableSpec_getColumnCount(JNIEnv* env, jobject jTableSpec)
 
 jobject Java_io_realm_TableSpec_getColumnType(JNIEnv* env, jobject jTableSpec, jlong columnIndex)
 {
-    static jmethodID jGetColumnTypeMethodId = GetTableSpecMethodID(env, "getColumnType", "(J)Lio/realm/dynamic/RealmType;");
+    static jmethodID jGetColumnTypeMethodId = GetTableSpecMethodID(env, "getColumnType", "(J)Lio/realm/dynamic/RealmFieldType;");
     if (jGetColumnTypeMethodId)
         return env->CallObjectMethod(jTableSpec, jGetColumnTypeMethodId, columnIndex);
     return NULL;

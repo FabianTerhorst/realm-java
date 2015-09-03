@@ -4,7 +4,7 @@ package io.realm.internal;
 
 import junit.framework.TestCase;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 
 @SuppressWarnings("unused")
 public class JNIDistinctTest extends TestCase {
@@ -12,8 +12,8 @@ public class JNIDistinctTest extends TestCase {
 
     void init() {
         table = new Table();
-        table.addColumn(RealmType.INTEGER, "number");
-        table.addColumn(RealmType.STRING, "name");
+        table.addColumn(RealmFieldType.INTEGER, "number");
+        table.addColumn(RealmFieldType.STRING, "name");
 
         long i = 0;
         table.add(0, "A");

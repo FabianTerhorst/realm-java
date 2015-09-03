@@ -27,7 +27,7 @@ import io.realm.internal.Mixed;
  * convert between normal Java types and the Realm types. However it is possible to access these
  * types through a {@link DynamicRealmObject}.
  */
-public enum RealmType {
+public enum RealmFieldType {
     // Make sure numbers match with <realm/column_type.hpp>
     INTEGER(0),
     BOOLEAN(1),
@@ -43,9 +43,9 @@ public enum RealmType {
     BACKLINK(14);
 
     // Primitive array for fast mapping between between native values and their Realm type.
-    private static RealmType[] typeList = new RealmType[15];
+    private static RealmFieldType[] typeList = new RealmFieldType[15];
     static {
-        RealmType[] columnTypes = values();
+        RealmFieldType[] columnTypes = values();
         for (int i = 0; i < columnTypes.length; i++) {
             int v = columnTypes[i].nativeValue;
             typeList[v] = columnTypes[i];
@@ -54,7 +54,7 @@ public enum RealmType {
 
     private final int nativeValue;
 
-    RealmType(int nativeValue) {
+    RealmFieldType(int nativeValue) {
         this.nativeValue = nativeValue;
     }
 
@@ -104,9 +104,9 @@ public enum RealmType {
      * @return The corresponding Realm type.
      * @throws IllegalArgumentException if value isn't valid.
      */
-    public static RealmType fromNativeValue(int value) {
+    public static RealmFieldType fromNativeValue(int value) {
         if (0 <= value && value < typeList.length) {
-            RealmType e = typeList[value];
+            RealmFieldType e = typeList[value];
             if (e != null) {
                 return e;
             }

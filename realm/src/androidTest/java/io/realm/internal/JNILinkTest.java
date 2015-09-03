@@ -2,7 +2,7 @@ package io.realm.internal;
 
 import junit.framework.TestCase;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 
 public class JNILinkTest extends TestCase {
 
@@ -14,14 +14,14 @@ public class JNILinkTest extends TestCase {
 
 
         Table table2 = group.getTable("table2");
-        table2.addColumn(RealmType.INTEGER, "int");
-        table2.addColumn(RealmType.STRING, "string");
+        table2.addColumn(RealmFieldType.INTEGER, "int");
+        table2.addColumn(RealmFieldType.STRING, "string");
 
         table2.add(1, "c");
         table2.add(2, "b");
         table2.add(3, "a");
 
-        table1.addColumnLink(RealmType.LINK, "Link", table2);
+        table1.addColumnLink(RealmFieldType.LINK, "Link", table2);
 
 
         table1.addEmptyRow();
@@ -48,8 +48,8 @@ public class JNILinkTest extends TestCase {
         Group group = new Group();
 
         Table table1 = group.getTable("table1");
-        table1.addColumn(RealmType.INTEGER, "int");
-        table1.addColumn(RealmType.STRING, "string");
+        table1.addColumn(RealmFieldType.INTEGER, "int");
+        table1.addColumn(RealmFieldType.STRING, "string");
         table1.add(1, "c");
         table1.add(2, "b");
         table1.add(3, "a");
@@ -57,7 +57,7 @@ public class JNILinkTest extends TestCase {
 
         Table table2 = group.getTable("table2");
 
-        table2.addColumnLink(RealmType.LINK_LIST, "LinkList", table1);
+        table2.addColumnLink(RealmFieldType.LINK_LIST, "LinkList", table1);
 
         table2.insertLinkList(0,0);
 

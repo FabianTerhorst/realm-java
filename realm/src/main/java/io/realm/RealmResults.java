@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 import io.realm.exceptions.RealmException;
 import io.realm.internal.TableOrView;
 import io.realm.internal.TableView;
@@ -348,7 +348,7 @@ public class RealmResults<E extends RealmObject> extends AbstractList<E> {
     public Date minDate(String fieldName) {
         realm.checkIfValid();
         long columnIndex = table.getColumnIndex(fieldName);
-        if (table.getColumnType(columnIndex) == RealmType.DATE) {
+        if (table.getColumnType(columnIndex) == RealmFieldType.DATE) {
             return table.minimumDate(columnIndex);
         }
         else {
@@ -389,7 +389,7 @@ public class RealmResults<E extends RealmObject> extends AbstractList<E> {
     public Date maxDate(String fieldName) {
         realm.checkIfValid();
         long columnIndex = table.getColumnIndex(fieldName);
-        if (table.getColumnType(columnIndex) == RealmType.DATE) {
+        if (table.getColumnType(columnIndex) == RealmFieldType.DATE) {
             return table.maximumDate(columnIndex);
         }
         else {

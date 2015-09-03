@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 import io.realm.internal.test.TestHelper;
 
 // Tables get detached
@@ -37,7 +37,7 @@ public class JNICloseTest extends AndroidTestCase {
         try {
             Table t = wt.getTable("test");
             resources.add(t);
-            t.addColumn(RealmType.STRING, "StringColumn");
+            t.addColumn(RealmFieldType.STRING, "StringColumn");
 
             t.add("abc");
             t.add("cba");
@@ -63,7 +63,7 @@ public class JNICloseTest extends AndroidTestCase {
 
         try { table.size();                            fail("Table is closed"); } catch (IllegalStateException e) { }
         try { table.getColumnCount();                  fail("Table is closed"); } catch (IllegalStateException e) { }
-        try { table.addColumn(RealmType.STRING, "");  fail("Table is closed"); } catch (IllegalStateException e) { }
+        try { table.addColumn(RealmFieldType.STRING, "");  fail("Table is closed"); } catch (IllegalStateException e) { }
 
         // TODO: Test all methods...
     }
@@ -143,8 +143,8 @@ public class JNICloseTest extends AndroidTestCase {
 
         WriteTransaction trans = db.beginWrite();
         Table tbl = trans.getTable("EmployeeTable");
-        tbl.addColumn(RealmType.STRING, "name");
-        tbl.addColumn(RealmType.INTEGER, "number");
+        tbl.addColumn(RealmFieldType.STRING, "name");
+        tbl.addColumn(RealmFieldType.INTEGER, "number");
         TableView view = tbl.where().findAll();
 
         trans.commit();

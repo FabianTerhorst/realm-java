@@ -16,10 +16,10 @@
 
 package io.realm.internal;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 
 /**
- * The LinkView class represent a core {@link RealmType#LINK_LIST}.
+ * The LinkView class represent a core {@link RealmFieldType#LINK_LIST}.
  */
 public class LinkView {
 

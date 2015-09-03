@@ -6,7 +6,7 @@ import junit.framework.TestCase;
 
 import java.util.Date;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 
 public class JNIRowTest extends TestCase {
 
@@ -14,13 +14,13 @@ public class JNIRowTest extends TestCase {
 
         Table table = new Table();
 
-        table.addColumn(RealmType.STRING, "string");
-        table.addColumn(RealmType.INTEGER, "integer");
-        table.addColumn(RealmType.FLOAT, "float");
-        table.addColumn(RealmType.DOUBLE, "double");
-        table.addColumn(RealmType.BOOLEAN, "boolean");
-        table.addColumn(RealmType.DATE, "date");
-        table.addColumn(RealmType.BINARY, "binary");
+        table.addColumn(RealmFieldType.STRING, "string");
+        table.addColumn(RealmFieldType.INTEGER, "integer");
+        table.addColumn(RealmFieldType.FLOAT, "float");
+        table.addColumn(RealmFieldType.DOUBLE, "double");
+        table.addColumn(RealmFieldType.BOOLEAN, "boolean");
+        table.addColumn(RealmFieldType.DATE, "date");
+        table.addColumn(RealmFieldType.BINARY, "binary");
 
 
         byte[] data = new byte[2];
@@ -61,7 +61,7 @@ public class JNIRowTest extends TestCase {
     public void testMixed() {
         Table table = new Table();
 
-        table.addColumn(RealmType.MIXED, "mixed");
+        table.addColumn(RealmFieldType.MIXED, "mixed");
 
         table.addEmptyRows(2);
 

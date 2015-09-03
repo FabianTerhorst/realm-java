@@ -2,7 +2,7 @@ package io.realm.internal;
 
 import junit.framework.TestCase;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 
 public class JNIColumnInfoTest extends TestCase {
 
@@ -11,8 +11,8 @@ public class JNIColumnInfoTest extends TestCase {
     @Override
     public void setUp() {
         table = new Table();
-        table.addColumn(RealmType.STRING, "firstName");
-        table.addColumn(RealmType.STRING, "lastName");
+        table.addColumn(RealmFieldType.STRING, "firstName");
+        table.addColumn(RealmFieldType.STRING, "lastName");
     }
 
     public void testShouldGetColumnInformation() {
@@ -23,7 +23,7 @@ public class JNIColumnInfoTest extends TestCase {
 
         assertEquals(1, table.getColumnIndex("lastName"));
 
-        assertEquals(RealmType.STRING, table.getColumnType(1));
+        assertEquals(RealmFieldType.STRING, table.getColumnType(1));
 
     }
 
@@ -37,7 +37,7 @@ public class JNIColumnInfoTest extends TestCase {
 
         assertEquals(1, view.getColumnIndex("lastName"));
 
-        assertEquals(RealmType.STRING, view.getColumnType(1));
+        assertEquals(RealmFieldType.STRING, view.getColumnType(1));
 
     }
 

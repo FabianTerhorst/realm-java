@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 
 
 // Tables get detached
@@ -18,7 +18,7 @@ public class JNIGarbageCollectorTableTest extends TestCase {
     public void t1(long count){
         t = new Table();
 
-        t.addColumn(RealmType.TABLE, "table");
+        t.addColumn(RealmFieldType.TABLE, "table");
         t.addEmptyRow();
 
         List<Table> tables = new ArrayList<Table>();
@@ -34,7 +34,7 @@ public class JNIGarbageCollectorTableTest extends TestCase {
     public void t2(long count){
         t = new Table();
 
-        t.addColumn(RealmType.TABLE, "table");
+        t.addColumn(RealmFieldType.TABLE, "table");
         t.addEmptyRow();
 
         for (long i=0;i<count;i++){
@@ -50,7 +50,7 @@ public class JNIGarbageCollectorTableTest extends TestCase {
     public void t3(long count){
         t = new Table();
 
-        t.addColumn(RealmType.TABLE, "table");
+        t.addColumn(RealmFieldType.TABLE, "table");
         t.addEmptyRow();
 
         for (long i=0;i<count;i++){

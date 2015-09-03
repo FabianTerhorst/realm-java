@@ -18,7 +18,7 @@ package io.realm.internal;
 
 import java.util.Date;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 
 /**
  * Wrapper around a Row in Realm Core.
@@ -90,8 +90,8 @@ public class UncheckedRow extends NativeObject implements Row {
     }
 
     @Override
-    public RealmType getColumnType(long columnIndex) {
-        return RealmType.fromNativeValue(nativeGetColumnType(nativePointer, columnIndex));
+    public RealmFieldType getColumnType(long columnIndex) {
+        return RealmFieldType.fromNativeValue(nativeGetColumnType(nativePointer, columnIndex));
     }
 
     // Getters
@@ -147,8 +147,8 @@ public class UncheckedRow extends NativeObject implements Row {
     }
 
     @Override
-    public RealmType getMixedType(long columnIndex) {
-        return RealmType.fromNativeValue(nativeGetMixedType(nativePointer, columnIndex));
+    public RealmFieldType getMixedType(long columnIndex) {
+        return RealmFieldType.fromNativeValue(nativeGetMixedType(nativePointer, columnIndex));
     }
 
     @Override

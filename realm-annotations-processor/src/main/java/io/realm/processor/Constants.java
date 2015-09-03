@@ -60,23 +60,23 @@ public class Constants {
     static final Map<String, String> JAVA_TO_COLUMN_TYPES;
     static {
         JAVA_TO_COLUMN_TYPES = new HashMap<String, String>();
-        JAVA_TO_COLUMN_TYPES.put("byte", "RealmType.INTEGER");
-        JAVA_TO_COLUMN_TYPES.put("short", "RealmType.INTEGER");
-        JAVA_TO_COLUMN_TYPES.put("int", "RealmType.INTEGER");
-        JAVA_TO_COLUMN_TYPES.put("long", "RealmType.INTEGER");
-        JAVA_TO_COLUMN_TYPES.put("float", "RealmType.FLOAT");
-        JAVA_TO_COLUMN_TYPES.put("double", "RealmType.DOUBLE");
-        JAVA_TO_COLUMN_TYPES.put("boolean", "RealmType.BOOLEAN");
-        JAVA_TO_COLUMN_TYPES.put("Byte", "RealmType.INTEGER");
-        JAVA_TO_COLUMN_TYPES.put("Short", "RealmType.INTEGER");
-        JAVA_TO_COLUMN_TYPES.put("Integer", "RealmType.INTEGER");
-        JAVA_TO_COLUMN_TYPES.put("Long", "RealmType.INTEGER");
-        JAVA_TO_COLUMN_TYPES.put("Float", "RealmType.FLOAT");
-        JAVA_TO_COLUMN_TYPES.put("Double", "RealmType.DOUBLE");
-        JAVA_TO_COLUMN_TYPES.put("Boolean", "RealmType.BOOLEAN");
-        JAVA_TO_COLUMN_TYPES.put("java.lang.String", "RealmType.STRING");
-        JAVA_TO_COLUMN_TYPES.put("java.util.Date", "RealmType.DATE");
-        JAVA_TO_COLUMN_TYPES.put("byte[]", "RealmType.BINARY");
+        JAVA_TO_COLUMN_TYPES.put("byte", "RealmFieldType.INTEGER");
+        JAVA_TO_COLUMN_TYPES.put("short", "RealmFieldType.INTEGER");
+        JAVA_TO_COLUMN_TYPES.put("int", "RealmFieldType.INTEGER");
+        JAVA_TO_COLUMN_TYPES.put("long", "RealmFieldType.INTEGER");
+        JAVA_TO_COLUMN_TYPES.put("float", "RealmFieldType.FLOAT");
+        JAVA_TO_COLUMN_TYPES.put("double", "RealmFieldType.DOUBLE");
+        JAVA_TO_COLUMN_TYPES.put("boolean", "RealmFieldType.BOOLEAN");
+        JAVA_TO_COLUMN_TYPES.put("Byte", "RealmFieldType.INTEGER");
+        JAVA_TO_COLUMN_TYPES.put("Short", "RealmFieldType.INTEGER");
+        JAVA_TO_COLUMN_TYPES.put("Integer", "RealmFieldType.INTEGER");
+        JAVA_TO_COLUMN_TYPES.put("Long", "RealmFieldType.INTEGER");
+        JAVA_TO_COLUMN_TYPES.put("Float", "RealmFieldType.FLOAT");
+        JAVA_TO_COLUMN_TYPES.put("Double", "RealmFieldType.DOUBLE");
+        JAVA_TO_COLUMN_TYPES.put("Boolean", "RealmFieldType.BOOLEAN");
+        JAVA_TO_COLUMN_TYPES.put("java.lang.String", "RealmFieldType.STRING");
+        JAVA_TO_COLUMN_TYPES.put("java.util.Date", "RealmFieldType.DATE");
+        JAVA_TO_COLUMN_TYPES.put("byte[]", "RealmFieldType.BINARY");
     }
 
     static final Map<String, String> CASTING_TYPES;

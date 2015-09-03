@@ -2,7 +2,7 @@ package io.realm.internal;
 
 import junit.framework.TestCase;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 
 public class JNISubtableTest extends TestCase {
 
@@ -11,10 +11,10 @@ public class JNISubtableTest extends TestCase {
         Table table = group.getTable("emp");
 
         TableSpec tableSpec = new TableSpec();
-        tableSpec.addColumn(RealmType.STRING, "name");
+        tableSpec.addColumn(RealmFieldType.STRING, "name");
 
         TableSpec subspec = tableSpec.addSubtableColumn("sub");
-        subspec.addColumn(RealmType.INTEGER, "num");
+        subspec.addColumn(RealmFieldType.INTEGER, "num");
 
         table.updateFromSpec(tableSpec);
 
@@ -39,12 +39,12 @@ public class JNISubtableTest extends TestCase {
 
         // Define table
         TableSpec tableSpec = new TableSpec();
-        tableSpec.addColumn(RealmType.STRING, "name");
+        tableSpec.addColumn(RealmFieldType.STRING, "name");
 
         TableSpec subspec = tableSpec.addSubtableColumn("sub");
-        subspec.addColumn(RealmType.INTEGER, "num");
+        subspec.addColumn(RealmFieldType.INTEGER, "num");
 
-        tableSpec.addColumn(RealmType.INTEGER, "Int");
+        tableSpec.addColumn(RealmFieldType.INTEGER, "Int");
         table.updateFromSpec(tableSpec);
 
         // Insert values
@@ -60,8 +60,8 @@ public class JNISubtableTest extends TestCase {
         Group group = new Group();
         Table table = group.getTable("emp");
 
-        table.addColumn(RealmType.STRING, "string");
-        long subtableColIndex = table.addColumn(RealmType.TABLE, "table");
+        table.addColumn(RealmFieldType.STRING, "string");
+        long subtableColIndex = table.addColumn(RealmFieldType.TABLE, "table");
 
         table.add("val", null);
         assertEquals(0,  table.getSubtable(subtableColIndex, 0).getColumnCount());
@@ -71,7 +71,7 @@ public class JNISubtableTest extends TestCase {
         Group group = new Group();
         Table table = group.getTable("emp");
 
-        table.addColumn(RealmType.TABLE, "table");
+        table.addColumn(RealmFieldType.TABLE, "table");
 
         // No rows added
         try { 
@@ -102,10 +102,10 @@ public class JNISubtableTest extends TestCase {
         Group group = new Group();
         Table table = group.getTable("emp");
 
-        table.addColumn(RealmType.TABLE, "table");
+        table.addColumn(RealmFieldType.TABLE, "table");
         TableSchema subSchema = table.getSubtableSchema(0);
-        long subtableIntColIndex = subSchema.addColumn(RealmType.INTEGER, "int col");
-        long subtableStringColIndex = subSchema.addColumn(RealmType.STRING, "string col");
+        long subtableIntColIndex = subSchema.addColumn(RealmFieldType.INTEGER, "int col");
+        long subtableStringColIndex = subSchema.addColumn(RealmFieldType.STRING, "string col");
 
         table.addEmptyRow();
 
@@ -126,18 +126,18 @@ public class JNISubtableTest extends TestCase {
 
         // Table definition
         Table persons = new Table();
-        persons.addColumn(RealmType.STRING, "name");
-        persons.addColumn(RealmType.STRING, "email");
-        persons.addColumn(RealmType.TABLE, "addresses");
+        persons.addColumn(RealmFieldType.STRING, "name");
+        persons.addColumn(RealmFieldType.STRING, "email");
+        persons.addColumn(RealmFieldType.TABLE, "addresses");
 
         // Add a subtable
         TableSchema addresses = persons.getSubtableSchema(2);
-        addresses.addColumn(RealmType.STRING, "street");
-        addresses.addColumn(RealmType.INTEGER, "zipcode");
-        addresses.addColumn(RealmType.TABLE, "phone_numbers");
+        addresses.addColumn(RealmFieldType.STRING, "street");
+        addresses.addColumn(RealmFieldType.INTEGER, "zipcode");
+        addresses.addColumn(RealmFieldType.TABLE, "phone_numbers");
 
         TableSchema phone_numbers = addresses.getSubtableSchema(2);
-        phone_numbers.addColumn(RealmType.INTEGER, "number");
+        phone_numbers.addColumn(RealmFieldType.INTEGER, "number");
 
         // Inserting data
         persons.add("Mr X", "xx@xxxx.com", new Object[][] {{ "X Street", 1234, new Object[][] {{ 12345678 }} }});
@@ -158,34 +158,34 @@ public class JNISubtableTest extends TestCase {
         // Table definition
         Table persons = new Table();
 
-        persons.addColumn(RealmType.TABLE, "sub");
+        persons.addColumn(RealmFieldType.TABLE, "sub");
 
         TableSchema addresses = persons.getSubtableSchema(0);
         try {
-            addresses.addColumn(RealmType.STRING, "I am 64 chracters...............................................");
+            addresses.addColumn(RealmFieldType.STRING, "I am 64 chracters...............................................");
             fail("Only 63 chracters supported"); }
         catch (IllegalArgumentException e) {
             assertNotNull(e);
         }
 
-        addresses.addColumn(RealmType.STRING, "I am 63 chracters..............................................");
+        addresses.addColumn(RealmFieldType.STRING, "I am 63 chracters..............................................");
     }
 
     public void testRemoveColumnFromSubtable() {
 
         // Table definition
         Table persons = new Table();
-        persons.addColumn(RealmType.STRING, "name");
-        persons.addColumn(RealmType.STRING, "email");
-        persons.addColumn(RealmType.TABLE, "addresses");
+        persons.addColumn(RealmFieldType.STRING, "name");
+        persons.addColumn(RealmFieldType.STRING, "email");
+        persons.addColumn(RealmFieldType.TABLE, "addresses");
 
         TableSchema addresses = persons.getSubtableSchema(2);
-        addresses.addColumn(RealmType.STRING, "street");
-        addresses.addColumn(RealmType.INTEGER, "zipcode");
-        addresses.addColumn(RealmType.TABLE, "phone_numbers");
+        addresses.addColumn(RealmFieldType.STRING, "street");
+        addresses.addColumn(RealmFieldType.INTEGER, "zipcode");
+        addresses.addColumn(RealmFieldType.TABLE, "phone_numbers");
 
         TableSchema phone_numbers = addresses.getSubtableSchema(2);
-        phone_numbers.addColumn(RealmType.INTEGER, "number");
+        phone_numbers.addColumn(RealmFieldType.INTEGER, "number");
 
         // Inserting data
         persons.add("Mr X", "xx@xxxx.com", new Object[][] {{ "X Street", 1234, new Object[][] {{ 12345678 }} }});
@@ -200,18 +200,18 @@ public class JNISubtableTest extends TestCase {
 
         // Table definition
         Table persons = new Table();
-        persons.addColumn(RealmType.STRING, "name");
-        persons.addColumn(RealmType.STRING, "email");
-        persons.addColumn(RealmType.TABLE, "addresses");
+        persons.addColumn(RealmFieldType.STRING, "name");
+        persons.addColumn(RealmFieldType.STRING, "email");
+        persons.addColumn(RealmFieldType.TABLE, "addresses");
 
         // Define subtable
         TableSchema addresses = persons.getSubtableSchema(2);
-        addresses.addColumn(RealmType.STRING, "street");
-        addresses.addColumn(RealmType.INTEGER, "zipcode");
-        addresses.addColumn(RealmType.TABLE, "phone_numbers");
+        addresses.addColumn(RealmFieldType.STRING, "street");
+        addresses.addColumn(RealmFieldType.INTEGER, "zipcode");
+        addresses.addColumn(RealmFieldType.TABLE, "phone_numbers");
 
         TableSchema phone_numbers = addresses.getSubtableSchema(2);
-        phone_numbers.addColumn(RealmType.INTEGER, "number");
+        phone_numbers.addColumn(RealmFieldType.INTEGER, "number");
 
         // Inserting data
         persons.add("Mr X", "xx@xxxx.com", new Object[][] {{ "X Street", 1234, new Object[][] {{ 12345678 }} }});
@@ -225,24 +225,24 @@ public class JNISubtableTest extends TestCase {
     public void testShouldThrowOnGetSubtableDefinitionFromSubtable() {
         // Table definition
         Table persons = new Table();
-        persons.addColumn(RealmType.STRING, "name");
-        persons.addColumn(RealmType.STRING, "email");
-        persons.addColumn(RealmType.TABLE, "addresses");
+        persons.addColumn(RealmFieldType.STRING, "name");
+        persons.addColumn(RealmFieldType.STRING, "email");
+        persons.addColumn(RealmFieldType.TABLE, "addresses");
 
         TableSchema addresses = persons.getSubtableSchema(2);
-        addresses.addColumn(RealmType.STRING, "street");
-        addresses.addColumn(RealmType.INTEGER, "zipcode");
-        addresses.addColumn(RealmType.TABLE, "phone_numbers");
+        addresses.addColumn(RealmFieldType.STRING, "street");
+        addresses.addColumn(RealmFieldType.INTEGER, "zipcode");
+        addresses.addColumn(RealmFieldType.TABLE, "phone_numbers");
 
         TableSchema phone_numbers = addresses.getSubtableSchema(2);
-        phone_numbers.addColumn(RealmType.INTEGER, "number");
+        phone_numbers.addColumn(RealmFieldType.INTEGER, "number");
 
         // Inserting data
         persons.add("Mr X", "xx@xxxx.com", new Object[][] {{ "X Street", 1234, new Object[][] {{ 12345678 }} }});
 
         try {
             // Should throw
-            persons.getSubtable(2,0).addColumn(RealmType.INTEGER, "i");
+            persons.getSubtable(2,0).addColumn(RealmFieldType.INTEGER, "i");
             fail("expected exception.");
         } catch (UnsupportedOperationException e) {
             assertNotNull(e);

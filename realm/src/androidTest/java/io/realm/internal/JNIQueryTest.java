@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import java.util.Date;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 import io.realm.internal.test.TestHelper;
 
 public class JNIQueryTest extends TestCase {
@@ -13,8 +13,8 @@ public class JNIQueryTest extends TestCase {
 
     void init() {
         table = new Table();
-        table.addColumn(RealmType.INTEGER, "number");
-        table.addColumn(RealmType.STRING, "name");
+        table.addColumn(RealmFieldType.INTEGER, "number");
+        table.addColumn(RealmFieldType.STRING, "name");
 
         table.add(10, "A");
         table.add(11, "B");
@@ -333,8 +333,8 @@ public class JNIQueryTest extends TestCase {
 
     public void testNullInputQuery() {
         Table t = new Table();
-        t.addColumn(RealmType.DATE, "dateCol");
-        t.addColumn(RealmType.STRING, "stringCol");
+        t.addColumn(RealmFieldType.DATE, "dateCol");
+        t.addColumn(RealmFieldType.STRING, "stringCol");
         
         Date nullDate = null;
         try { t.where().equalTo(new long[]{0}, nullDate);               fail("Date is null"); } catch (IllegalArgumentException e) { }
@@ -366,9 +366,9 @@ public class JNIQueryTest extends TestCase {
         // Create a table
         Table table = new Table();
 
-        table.addColumn(RealmType.STRING, "username");
-        table.addColumn(RealmType.INTEGER, "score");
-        table.addColumn(RealmType.BOOLEAN, "completed");
+        table.addColumn(RealmFieldType.STRING, "username");
+        table.addColumn(RealmFieldType.INTEGER, "score");
+        table.addColumn(RealmFieldType.BOOLEAN, "completed");
 
         // Insert some values
         table.add("Arnold", 420, false);    // 0
@@ -628,9 +628,9 @@ public class JNIQueryTest extends TestCase {
         Table table = new Table();
 
         // Specify the column types and names
-        table.addColumn(RealmType.STRING, "firstName");
-        table.addColumn(RealmType.STRING, "lastName");
-        table.addColumn(RealmType.INTEGER, "salary");
+        table.addColumn(RealmFieldType.STRING, "firstName");
+        table.addColumn(RealmFieldType.STRING, "lastName");
+        table.addColumn(RealmFieldType.INTEGER, "salary");
 
         // Add data to the table
         table.add("John", "Lee", 10000);
@@ -655,9 +655,9 @@ public class JNIQueryTest extends TestCase {
         Table table = new Table();
 
         // Specify the column types and names
-        table.addColumn(RealmType.STRING, "firstName");
-        table.addColumn(RealmType.STRING, "lastName");
-        table.addColumn(RealmType.INTEGER, "salary");
+        table.addColumn(RealmFieldType.STRING, "firstName");
+        table.addColumn(RealmFieldType.STRING, "lastName");
+        table.addColumn(RealmFieldType.INTEGER, "salary");
 
         // Add data to the table
         table.add("John", "Lee", 10000);
@@ -677,14 +677,14 @@ public class JNIQueryTest extends TestCase {
     
     public void testQueryWithSubtable() {
         Table table = new Table();
-        table.addColumn(RealmType.STRING, "username");
-        table.addColumn(RealmType.TABLE, "tasks");
-        table.addColumn(RealmType.STRING, "username2");
+        table.addColumn(RealmFieldType.STRING, "username");
+        table.addColumn(RealmFieldType.TABLE, "tasks");
+        table.addColumn(RealmFieldType.STRING, "username2");
 
         TableSchema tasks = table.getSubtableSchema(1);
-        tasks.addColumn(RealmType.STRING, "name");
-        tasks.addColumn(RealmType.INTEGER, "score");
-        tasks.addColumn(RealmType.BOOLEAN, "completed");
+        tasks.addColumn(RealmFieldType.STRING, "name");
+        tasks.addColumn(RealmFieldType.INTEGER, "score");
+        tasks.addColumn(RealmFieldType.BOOLEAN, "completed");
 
         // Insert some values
         table.add("Arnold", new Object[][] {{"task1", 120, false},
@@ -703,10 +703,10 @@ public class JNIQueryTest extends TestCase {
     
     public void testQueryWithUnbalancedSubtable() {
         Table table = new Table();
-        table.addColumn(RealmType.TABLE, "sub");
+        table.addColumn(RealmFieldType.TABLE, "sub");
         
         TableSchema tasks = table.getSubtableSchema(0);
-        tasks.addColumn(RealmType.STRING, "name");
+        tasks.addColumn(RealmFieldType.STRING, "name");
         
         try { table.where().subtable(0).count();               assert(false); } catch (UnsupportedOperationException e) {}
         try { table.where().endSubtable().count();             assert(false); } catch (UnsupportedOperationException e) {}
@@ -718,7 +718,7 @@ public class JNIQueryTest extends TestCase {
     public void testMaximumDate() {
 
         Table table = new Table();
-        table.addColumn(RealmType.DATE, "date");
+        table.addColumn(RealmFieldType.DATE, "date");
 
         table.add(new Date(0));
         table.add(new Date(10000));
@@ -732,7 +732,7 @@ public class JNIQueryTest extends TestCase {
     public void testMinimumDate() {
 
         Table table = new Table();
-        table.addColumn(RealmType.DATE, "date");
+        table.addColumn(RealmFieldType.DATE, "date");
 
         table.add(new Date(10000));
         table.add(new Date(0));

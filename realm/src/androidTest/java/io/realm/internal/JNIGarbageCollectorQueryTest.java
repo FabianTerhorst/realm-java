@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 
 // Tables get detached
 
@@ -47,7 +47,7 @@ public class JNIGarbageCollectorQueryTest extends TestCase {
     public void testGetSubtable(){
 
         t = new Table();
-        t.addColumn(RealmType.TABLE, "table");
+        t.addColumn(RealmFieldType.TABLE, "table");
 
         long count = 100;
         long loop = 100;

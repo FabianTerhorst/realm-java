@@ -19,20 +19,20 @@ package io.realm.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 
 public class TableSpec {
 
     public static class ColumnInfo {
 
-        protected final RealmType type;
+        protected final RealmFieldType type;
         protected final String name;
         protected final TableSpec tableSpec;
 
-        public ColumnInfo(RealmType type, String name) {
+        public ColumnInfo(RealmFieldType type, String name) {
             this.name = name;
             this.type = type;
-            this.tableSpec = (type == RealmType.TABLE) ? new TableSpec() : null;
+            this.tableSpec = (type == RealmFieldType.TABLE) ? new TableSpec() : null;
         }
 
         @Override
@@ -76,7 +76,7 @@ public class TableSpec {
         columnInfos = new ArrayList<ColumnInfo>();
     }
 
-    public void addColumn(RealmType type, String name) {
+    public void addColumn(RealmFieldType type, String name) {
         if (name.length() > 63) {
             throw new IllegalArgumentException("Column names are currently limited to max 63 characters.");
         }
@@ -84,14 +84,14 @@ public class TableSpec {
     }
 
     protected void addColumn(int colTypeIndex, String name) {
-        addColumn(RealmType.fromNativeValue(colTypeIndex), name);
+        addColumn(RealmFieldType.fromNativeValue(colTypeIndex), name);
     }
 
     public TableSpec addSubtableColumn(String name) {
         if (name.length() > 63) {
             throw new IllegalArgumentException("Column names are currently limited to max 63 characters.");
         }
-        ColumnInfo columnInfo = new ColumnInfo(RealmType.TABLE, name);
+        ColumnInfo columnInfo = new ColumnInfo(RealmFieldType.TABLE, name);
         columnInfos.add(columnInfo);
         return columnInfo.tableSpec;
     }
@@ -104,7 +104,7 @@ public class TableSpec {
         return columnInfos.size();
     }
 
-    public RealmType getColumnType(long columnIndex) {
+    public RealmFieldType getColumnType(long columnIndex) {
         return columnInfos.get((int) columnIndex).type;
     }
 

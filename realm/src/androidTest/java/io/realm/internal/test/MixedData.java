@@ -1,14 +1,14 @@
 package io.realm.internal.test;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 
 public class MixedData {
 
-    public RealmType type;
+    public RealmFieldType type;
 
     public Object value;
 
-    public MixedData(RealmType type, Object value) {
+    public MixedData(RealmFieldType type, Object value) {
         this.type = type;
         this.value = value;
     }

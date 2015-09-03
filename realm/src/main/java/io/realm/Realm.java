@@ -51,7 +51,7 @@ import io.realm.exceptions.RealmException;
 import io.realm.exceptions.RealmIOException;
 import io.realm.exceptions.RealmMigrationNeededException;
 import io.realm.internal.ColumnIndices;
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 import io.realm.internal.ImplicitTransaction;
 import io.realm.internal.RealmObjectProxy;
 import io.realm.internal.RealmProxyMediator;
@@ -1405,7 +1405,7 @@ public final class Realm implements Closeable {
     void setVersion(long version) {
         Table metadataTable = transaction.getTable("metadata");
         if (metadataTable.getColumnCount() == 0) {
-            metadataTable.addColumn(RealmType.INTEGER, "version");
+            metadataTable.addColumn(RealmFieldType.INTEGER, "version");
             metadataTable.addEmptyRow();
         }
         metadataTable.setLong(0, 0, version);

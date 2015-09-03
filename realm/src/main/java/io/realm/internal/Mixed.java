@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Date;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 
 public class Mixed {
 
@@ -41,9 +41,9 @@ public class Mixed {
         this.value = value;
     }
 
-    public Mixed(RealmType columnType) {
+    public Mixed(RealmFieldType columnType) {
         // It's actually ok to call with any columnType - it will however be assumed to be a ColumnTypeTable.
-        if (columnType == null  || columnType == RealmType.TABLE) {
+        if (columnType == null  || columnType == RealmFieldType.TABLE) {
             throw new AssertionError();
         }
         this.value = null;
@@ -105,24 +105,24 @@ public class Mixed {
         return value.hashCode();
     }
 
-    public RealmType getType() {
+    public RealmFieldType getType() {
         if (value == null) {
-            return RealmType.TABLE;
+            return RealmFieldType.TABLE;
         }
         if (value instanceof String)
-            return RealmType.STRING;
+            return RealmFieldType.STRING;
         else if (value instanceof Long)
-            return RealmType.INTEGER;
+            return RealmFieldType.INTEGER;
         else if (value instanceof Float)
-            return RealmType.FLOAT;
+            return RealmFieldType.FLOAT;
         else if (value instanceof Double)
-            return RealmType.DOUBLE;
+            return RealmFieldType.DOUBLE;
         else if (value instanceof Date)
-            return RealmType.DATE;
+            return RealmFieldType.DATE;
         else if (value instanceof Boolean)
-            return RealmType.BOOLEAN;
+            return RealmFieldType.BOOLEAN;
         else if (value instanceof ByteBuffer || (value instanceof byte[])) {
-            return RealmType.BINARY;
+            return RealmFieldType.BINARY;
         }
 
         throw new IllegalStateException("Unknown column type!");
@@ -226,7 +226,7 @@ public class Mixed {
     }
 
     public String getReadableValue() {
-        RealmType type = getType();
+        RealmFieldType type = getType();
         try {
             switch (type) {
             case BINARY:

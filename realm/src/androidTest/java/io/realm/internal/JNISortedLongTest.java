@@ -2,7 +2,7 @@ package io.realm.internal;
 
 import junit.framework.TestCase;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 
 public class JNISortedLongTest extends TestCase {
     Table table;
@@ -10,8 +10,8 @@ public class JNISortedLongTest extends TestCase {
 
     void init() {
         table = new Table();
-        table.addColumn(RealmType.INTEGER, "number");
-        table.addColumn(RealmType.STRING, "name");
+        table.addColumn(RealmFieldType.INTEGER, "number");
+        table.addColumn(RealmFieldType.STRING, "name");
 
         table.add(1, "A");
         table.add(10, "B");

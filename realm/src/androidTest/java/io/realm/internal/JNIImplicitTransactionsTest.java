@@ -5,7 +5,7 @@ import android.test.AndroidTestCase;
 import java.io.File;
 import java.util.Arrays;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 
 public class JNIImplicitTransactionsTest extends AndroidTestCase {
 
@@ -36,7 +36,7 @@ public class JNIImplicitTransactionsTest extends AndroidTestCase {
         WriteTransaction wt = sg.beginWrite();
         if (!wt.hasTable("test")) {
             Table table = wt.getTable("test");
-            table.addColumn(RealmType.INTEGER, "integer");
+            table.addColumn(RealmFieldType.INTEGER, "integer");
             table.addEmptyRow();
         }
         wt.commit();
@@ -64,7 +64,7 @@ public class JNIImplicitTransactionsTest extends AndroidTestCase {
         WriteTransaction wt = sg.beginWrite();
         if (!wt.hasTable("test")) {
             Table table = wt.getTable("test");
-            table.addColumn(RealmType.INTEGER, "integer");
+            table.addColumn(RealmFieldType.INTEGER, "integer");
             table.addEmptyRow();
         }
         wt.commit();

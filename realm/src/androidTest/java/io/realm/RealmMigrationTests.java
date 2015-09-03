@@ -5,7 +5,7 @@ import android.test.AndroidTestCase;
 import java.io.File;
 import java.io.IOException;
 
-import io.realm.dynamic.RealmType;
+import io.realm.dynamic.RealmFieldType;
 import io.realm.entities.AllTypes;
 import io.realm.entities.FieldOrder;
 import io.realm.entities.AnnotationTypes;
@@ -66,8 +66,8 @@ public class RealmMigrationTests extends AndroidTestCase {
             public long execute(Realm realm, long version) {
                 Table languageTable = realm.getTable(FieldOrder.class);
                 if (languageTable.getColumnCount() == 0) {
-                    languageTable.addColumn(RealmType.INTEGER, "field2");
-                    languageTable.addColumn(RealmType.BOOLEAN, "field1");
+                    languageTable.addColumn(RealmFieldType.INTEGER, "field2");
+                    languageTable.addColumn(RealmFieldType.BOOLEAN, "field1");
                 }
 
                 return version + 1;
@@ -103,12 +103,12 @@ public class RealmMigrationTests extends AndroidTestCase {
             @Override
             public long execute(Realm realm, long version) {
                 Table table = realm.getTable(AnnotationTypes.class);
-                long columnIndex = table.addColumn(RealmType.INTEGER, "id");
+                long columnIndex = table.addColumn(RealmFieldType.INTEGER, "id");
                 table.setPrimaryKey("id");
                 // Primary key will be indexed automatically
                 table.addSearchIndex(columnIndex);
-                table.addColumn(RealmType.STRING, "indexString");
-                table.addColumn(RealmType.STRING, "notIndexString");
+                table.addColumn(RealmFieldType.STRING, "indexString");
+                table.addColumn(RealmFieldType.STRING, "notIndexString");
                 // Forget to set @Index
                 return 1;
             }
@@ -134,12 +134,12 @@ public class RealmMigrationTests extends AndroidTestCase {
             public long execute(Realm realm, long version) {
                 Table table = realm.getTable(AnnotationTypes.class);
                 if (table.getColumnCount() == 0) {
-                    long columnIndex = table.addColumn(RealmType.INTEGER, "id");
+                    long columnIndex = table.addColumn(RealmFieldType.INTEGER, "id");
                     table.addSearchIndex(columnIndex);
                     // Forget to set @PrimaryKey
-                    columnIndex = table.addColumn(RealmType.STRING, "indexString");
+                    columnIndex = table.addColumn(RealmFieldType.STRING, "indexString");
                     table.addSearchIndex(columnIndex);
-                    table.addColumn(RealmType.STRING, "notIndexString");
+                    table.addColumn(RealmFieldType.STRING, "notIndexString");
                 }
                 return 1;
             }
@@ -167,13 +167,13 @@ public class RealmMigrationTests extends AndroidTestCase {
             @Override
             public long execute(Realm realm, long version) {
                 Table table = realm.getTable(AnnotationTypes.class);
-                long columnIndex = table.addColumn(RealmType.INTEGER, "id");
+                long columnIndex = table.addColumn(RealmFieldType.INTEGER, "id");
                 table.setPrimaryKey("id");
                 // Primary key will be indexed automatically
                 table.addSearchIndex(columnIndex);
-                columnIndex = table.addColumn(RealmType.STRING, "indexString");
+                columnIndex = table.addColumn(RealmFieldType.STRING, "indexString");
                 table.addSearchIndex(columnIndex);
-                table.addColumn(RealmType.STRING, "notIndexString");
+                table.addColumn(RealmFieldType.STRING, "notIndexString");
                 return 1;
             }
         };
@@ -198,12 +198,12 @@ public class RealmMigrationTests extends AndroidTestCase {
             @Override
             public long execute(Realm realm, long version) {
                 Table table = realm.getTable(AnnotationTypes.class);
-                table.addColumn(RealmType.INTEGER, "id");
+                table.addColumn(RealmFieldType.INTEGER, "id");
                 table.setPrimaryKey("id");
                 // Forget to add search index primary key
-                long columnIndex = table.addColumn(RealmType.STRING, "indexString");
+                long columnIndex = table.addColumn(RealmFieldType.STRING, "indexString");
                 table.addSearchIndex(columnIndex);
-                table.addColumn(RealmType.STRING, "notIndexString");
+                table.addColumn(RealmFieldType.STRING, "notIndexString");
                 return 1;
             }
         };
