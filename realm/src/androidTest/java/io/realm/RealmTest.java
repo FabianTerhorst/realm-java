@@ -1632,7 +1632,6 @@ public class RealmTest extends AndroidTestCase {
         try { testRealm.copyToRealmOrUpdate(ts);        fail(); } catch (IllegalStateException expected) {}
         try { testRealm.remove(AllTypes.class, 0);      fail(); } catch (IllegalStateException expected) {}
         try { testRealm.clear(AllTypes.class);          fail(); } catch (IllegalStateException expected) {}
-        try { testRealm.setVersion(42);                 fail(); } catch (IllegalStateException expected) {}
 
         try { testRealm.createObjectFromJson(AllTypesPrimaryKey.class, jsonObj);                fail(); } catch (RealmException expected) {}
         try { testRealm.createObjectFromJson(AllTypesPrimaryKey.class, jsonObjStr);             fail(); } catch (RealmException expected) {}
