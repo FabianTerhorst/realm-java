@@ -674,21 +674,6 @@ public class RealmTest extends AndroidTestCase {
         }
     }
 
-    // int getVersion() AND void setVersion(int version)
-    public void testGetVersionAndSetVersion() throws IOException {
-        // ** Initial version must be 0
-        populateTestRealm();
-        long version = testRealm.getVersion();
-        assertEquals(0, version);
-
-        // ** Version should be updateable
-        version = 42;
-        testRealm.beginTransaction();
-        testRealm.setVersion(version);
-        testRealm.commitTransaction();
-        assertEquals(version, testRealm.getVersion());
-    }
-
     public void testShouldFailOutsideTransaction() {
         // These calls should fail outside a Transaction:
         try {
