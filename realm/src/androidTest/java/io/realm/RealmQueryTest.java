@@ -351,7 +351,6 @@ public class RealmQueryTest extends AndroidTestCase{
         assertEquals(dog1, dog);
     }
 
-
     public void testSortMultiFailures() {
         // zero fields specified
         try {
@@ -370,7 +369,7 @@ public class RealmQueryTest extends AndroidTestCase{
 
         // null is not allowed
         try {
-            RealmResults<AllTypes> results = testRealm.where(AllTypes.class).findAllSorted(null, null);
+            RealmResults<AllTypes> results = testRealm.where(AllTypes.class).findAllSorted((String[]) null, null);
             fail();
         } catch (IllegalArgumentException ignored) {}
         try {

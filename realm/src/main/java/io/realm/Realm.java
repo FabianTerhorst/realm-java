@@ -24,6 +24,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.JsonReader;
 
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,6 +46,9 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.realm.exceptions.RealmException;
@@ -145,6 +149,9 @@ public final class Realm implements Closeable {
     // This is only needed by deleteRealmFile.
     private static final Map<String, AtomicInteger> globalOpenInstanceCounter =
             new ConcurrentHashMap<String, AtomicInteger>();
+
+    // Thread Pool for all async operations (Query & Write transaction)
+    public static final ExecutorService asyncQueryExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2 + 1);
 
     protected static final Map<Handler, String> handlers = new ConcurrentHashMap<Handler, String>();
     private static final int REALM_CHANGED = 14930352; // Hopefully it won't clash with other message IDs.
@@ -935,7 +942,7 @@ public final class Realm implements Closeable {
     public <E extends RealmObject> E createObject(Class<E> clazz) {
         Table table = getTable(clazz);
         long rowIndex = table.addEmptyRow();
-        return get(clazz, rowIndex);
+        return getByIndex(clazz, rowIndex);
     }
 
     /**
@@ -951,16 +958,25 @@ public final class Realm implements Closeable {
     <E extends RealmObject> E createObject(Class<E> clazz, Object primaryKeyValue) {
         Table table = getTable(clazz);
         long rowIndex = table.addEmptyRowWithPrimaryKey(primaryKeyValue);
-        return get(clazz, rowIndex);
+        return getByIndex(clazz, rowIndex);
     }
 
     void remove(Class<? extends RealmObject> clazz, long objectIndex) {
         getTable(clazz).moveLastOver(objectIndex);
     }
 
-    <E extends RealmObject> E get(Class<E> clazz, long rowIndex) {
+    <E extends RealmObject> E getByIndex(Class<E> clazz, long rowIndex) {
         Table table = getTable(clazz);
-        UncheckedRow row = table.getUncheckedRow(rowIndex);
+        UncheckedRow row = table.getUncheckedRowByIndex(rowIndex);
+        E result = configuration.getSchemaMediator().newInstance(clazz);
+        result.row = row;
+        result.realm = this;
+        return result;
+    }
+
+    <E extends RealmObject> E getByPointer(Class<E> clazz, long nativeRowPointer) {
+        Table table = getTable(clazz);
+        UncheckedRow row = table.getUncheckedRowByPointer(nativeRowPointer);
         E result = configuration.getSchemaMediator().newInstance(clazz);
         result.row = row;
         result.realm = this;
@@ -1370,7 +1386,8 @@ public final class Realm implements Closeable {
      */
     public void executeTransaction(Transaction transaction) {
         if (transaction == null)
-            return;
+            throw new IllegalArgumentException("transaction should not be null");
+
         beginTransaction();
         try {
             transaction.execute(this);
@@ -1382,6 +1399,78 @@ public final class Realm implements Closeable {
             cancelTransaction();
             throw e;
         }
+    }
+
+    /**
+     * Similar to {@link #executeTransaction(Transaction)} but runs asynchronously from a worker thread
+     * @param transaction {@link io.realm.Realm.Transaction} to execute.
+     * @param callback optional, to receive the result of this query
+     * @return A {@link io.realm.RealmQuery.Request} representing a cancellable task
+     */
+    public RealmQuery.Request executeTransaction(final Transaction transaction, @Nullable final Transaction.Callback callback) {
+        if (transaction == null)
+            throw new IllegalArgumentException("transaction should not be null");
+
+        // will use the Looper of the caller thread to post the result
+        final Handler handler = new Handler();
+
+        // We need to use the same configuration to open a background SharedGroup (i.e Realm)
+        // to perform the transaction
+        final RealmConfiguration realmConfiguration = getConfiguration();
+
+        final Future<?> pendingQuery = asyncQueryExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+
+                if (!Thread.currentThread().isInterrupted()) {
+                    Realm bgRealm = Realm.getInstance(realmConfiguration);
+                    bgRealm.beginTransaction();
+                    try {
+                        transaction.execute(bgRealm);
+
+                        if (!Thread.currentThread().isInterrupted()) {
+                            bgRealm.commitTransaction();
+                            if (callback != null) {
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        callback.onSuccess();
+                                    }
+                                });
+                            }
+                        } else {
+                            bgRealm.cancelTransaction();
+                        }
+
+                    } catch (final RuntimeException e) {
+                        bgRealm.cancelTransaction();
+                        if (callback != null && !Thread.currentThread().isInterrupted()) {
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onError(e);
+                                }
+                            });
+                        }
+                    } catch (final Error e) {
+                        bgRealm.cancelTransaction();
+                        if (callback != null && !Thread.currentThread().isInterrupted()) {
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onError(e);
+                                }
+                            });
+                        }
+                    } finally {
+                        bgRealm.close();
+                    }
+                }
+            }
+        });
+
+        return new RealmQuery.Request(pendingQuery);
     }
 
     /**
@@ -1636,6 +1725,23 @@ public final class Realm implements Closeable {
      */
     public interface Transaction {
         void execute(Realm realm);
-    }
 
+        /**
+         * Callback invoked after a {#Transaction} call, to notify the caller thread
+         */
+        class Callback {
+            public void onSuccess() {}
+            public void onError(Throwable e) {}
+        }
+    }
+    //FIXME Realm.java being the public API and the implementation.
+    //      we need a Realm interface to be able to separate this kind of call
+    //      (mostly from internal API/tests that need to access private field/method).
+    //      RealmImpl will be accessible to other internal packages
+    //      but not to the user (avoid compromising our exposed public API)
+    //
+
+    public long getSharedGroupPointer() {
+        return sharedGroup.getNativePointer();
+    }
 }
