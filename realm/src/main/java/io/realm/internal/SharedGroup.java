@@ -105,8 +105,6 @@ public class SharedGroup implements Closeable {
         nativeCommitAndContinueAsRead(nativePtr);
     }
 
-    private native void nativeCommitAndContinueAsRead(long nativePtr);
-
     void rollbackAndContinueAsRead() {
         nativeRollbackAndContinueAsRead(nativePtr, nativeReplicationPtr);
     }
@@ -123,8 +121,6 @@ public class SharedGroup implements Closeable {
         activeTransaction = true;
         return transaction;
     }
-
-    private native long nativeBeginImplicit(long nativePtr);
 
     public WriteTransaction beginWrite() {
         if (activeTransaction)
@@ -210,7 +206,6 @@ public class SharedGroup implements Closeable {
         activeTransaction = false;
     }
 
-
     boolean isClosed() {
         return nativePtr == 0;
     }
@@ -233,7 +228,6 @@ public class SharedGroup implements Closeable {
         return nativeCompact(nativePtr);
     }
 
-
     /**
      * Returns the absolute path to the file backing this SharedGroup.
      *
@@ -243,37 +237,33 @@ public class SharedGroup implements Closeable {
         return path;
     }
 
-    private native String nativeGetDefaultReplicationDatabaseFileName();
-
-    private native void nativeReserve(long nativePtr, long bytes);
-
-    private native boolean nativeHasChanged(long nativePtr);
-
-    private native long nativeBeginRead(long nativePtr);
-
-    private native void nativeEndRead(long nativePtr);
-
-    private native long nativeBeginWrite(long nativePtr);
-
-    private native void nativeCommit(long nativePtr);
-
-    private native void nativeRollback(long nativePtr);
-
-    private native long nativeCreate(String databaseFile,
-                                     int durabilityValue,
-                                     boolean no_create,
-                                     boolean enableReplication,
-                                     byte[] key);
-
-    private native boolean nativeCompact(long nativePtr);
-
     private void checkNativePtrNotZero() {
         if (this.nativePtr == 0) {
             throw new IOError(new RealmIOException("Realm could not be opened"));
         }
     }
 
+    private native long createNativeWithImplicitTransactions(long nativeReplicationPtr, int durability, byte[] key);
+    private native long nativeCreateReplication(String databaseFile, byte[] key);
+    private native void nativeAdvanceRead(long nativePtr);
+    private native void nativePromoteToWrite(long nativePtr);
+    private native void nativeCommitAndContinueAsRead(long nativePtr);
+    private native void nativeRollbackAndContinueAsRead(long nativePtr);
+    private native long nativeBeginImplicit(long nativePtr);
+    private native String nativeGetDefaultReplicationDatabaseFileName();
+    private native void nativeReserve(long nativePtr, long bytes);
+    private native boolean nativeHasChanged(long nativePtr);
+    private native long nativeBeginRead(long nativePtr);
+    private native void nativeEndRead(long nativePtr);
+    private native long nativeBeginWrite(long nativePtr);
+    private native void nativeCommit(long nativePtr);
+    private native void nativeRollback(long nativePtr);
+    private native long nativeCreate(String databaseFile,
+                                     int durabilityValue,
+                                     boolean no_create,
+                                     boolean enableReplication,
+                                     byte[] key);
+    private native boolean nativeCompact(long nativePtr);
     protected static native void nativeClose(long nativePtr);
-
     private native void nativeCloseReplication(long nativeReplicationPtr);
 }

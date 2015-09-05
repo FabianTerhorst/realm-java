@@ -38,7 +38,7 @@ If you want to test recent bugfixes or features that have not been packaged in a
     }
 
     dependencies {
-      compile 'io.realm:realm-android:0.82.0-SNAPSHOT'
+      compile 'io.realm:realm-android:0.83.0-SNAPSHOT'
     }
 
 ## Building Realm
@@ -81,6 +81,10 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for more details!
 
 Realm Java is published under the Apache 2.0 license.  
 The underlying core is available under the [Realm Core Binary License](LICENSE#L210-L243) while we [work to open-source it under the Apache 2.0 license](http://realm.io/docs/java/#faq).
+
+**This product is not being made available to any person located in Cuba, Iran,
+North Korea, Sudan, Syria or the Crimea region, or to any other person that is
+not eligible to receive the product under U.S. law.**
 
 ## Feedback
 

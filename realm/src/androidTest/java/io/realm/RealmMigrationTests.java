@@ -26,17 +26,18 @@ public class RealmMigrationTests extends AndroidTestCase {
 
     public void testRealmClosedAfterMigrationException() throws IOException {
         String REALM_NAME = "default0.realm";
-        Realm.deleteRealmFile(getContext(), REALM_NAME);
+        RealmConfiguration realmConfig = TestHelper.createConfiguration(getContext(), REALM_NAME);
+        Realm.deleteRealm(realmConfig);
         TestHelper.copyRealmFromAssets(getContext(), REALM_NAME, REALM_NAME);
         try {
-            Realm.getInstance(getContext(), REALM_NAME);
+            Realm.getInstance(realmConfig);
             fail("A migration should be triggered");
         } catch (RealmMigrationNeededException expected) {
-            Realm.deleteRealmFile(getContext(), REALM_NAME); // Delete old realm
+            Realm.deleteRealm(realmConfig); // Delete old realm
         }
 
         // This should recreate the Realm with proper schema
-        Realm realm = Realm.getInstance(getContext(), REALM_NAME);
+        Realm realm = Realm.getInstance(realmConfig);
         int result = realm.where(AllTypes.class).equalTo("columnString", "Foo").findAll().size();
         assertEquals(0, result);
     }
@@ -132,12 +133,14 @@ public class RealmMigrationTests extends AndroidTestCase {
             @Override
             public long execute(Realm realm, long version) {
                 Table table = realm.getTable(AnnotationTypes.class);
-                long columnIndex = table.addColumn(ColumnType.INTEGER, "id");
-                table.addSearchIndex(columnIndex);
-                // Forget to set @PrimaryKey
-                columnIndex = table.addColumn(ColumnType.STRING, "indexString");
-                table.addSearchIndex(columnIndex);
-                table.addColumn(ColumnType.STRING, "notIndexString");
+                if (table.getColumnCount() == 0) {
+                    long columnIndex = table.addColumn(ColumnType.INTEGER, "id");
+                    table.addSearchIndex(columnIndex);
+                    // Forget to set @PrimaryKey
+                    columnIndex = table.addColumn(ColumnType.STRING, "indexString");
+                    table.addSearchIndex(columnIndex);
+                    table.addColumn(ColumnType.STRING, "notIndexString");
+                }
                 return 1;
             }
         };
@@ -152,7 +155,10 @@ public class RealmMigrationTests extends AndroidTestCase {
         try {
             realm = Realm.getInstance(realmConfig);
             fail();
-        } catch (RealmMigrationNeededException expected) {
+        } catch (RealmMigrationNeededException e) {
+            if (!e.getMessage().equals("Primary key not defined for field 'id'")) {
+                fail(e.getMessage());
+            }
         }
     }
 

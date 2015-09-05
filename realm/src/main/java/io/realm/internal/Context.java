@@ -16,10 +16,13 @@
 
 package io.realm.internal;
 
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-class Context {
+public class Context {
 
     // Each group of related Realm objects will have a Context object in the root.
     // The root can be a table, a group, or a shared group.
@@ -27,9 +30,15 @@ class Context {
     // whose disposal need to be handed over from the garbage 
     // collection thread to the users thread.
 
+    // Reserved to be used only as a placholder by rowReferences Map to avoid autoboxing allocations
+    static final Integer ROW_REFERENCES_VALUE = 0;
+
     private List<Long> abandonedTables = new ArrayList<Long>();
     private List<Long> abandonedTableViews = new ArrayList<Long>();
     private List<Long> abandonedQueries = new ArrayList<Long>();
+
+    HashMap<Reference<?>, Integer> rowReferences = new HashMap<Reference<?>, Integer>();
+    ReferenceQueue<NativeObject> referenceQueue = new ReferenceQueue<NativeObject>();
 
     private boolean isFinalized = false;
 
@@ -52,6 +61,17 @@ class Context {
                 TableQuery.nativeClose(nativePointer);
             }
             abandonedQueries.clear();
+
+            cleanRows();
+        }
+    }
+
+    public void cleanRows() {
+        NativeObjectReference reference = (NativeObjectReference) referenceQueue.poll();
+        while (reference != null) {
+            UncheckedRow.nativeClose(reference.nativePointer);
+            rowReferences.remove(reference);
+            reference = (NativeObjectReference) referenceQueue.poll();
         }
     }
 

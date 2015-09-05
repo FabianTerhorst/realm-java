@@ -106,7 +106,6 @@ std::string num_to_string(T pNumber)
 #define CH(ptr) reinterpret_cast<ClientHistory*>(ptr)
 
 // Exception handling
-
 enum ExceptionKind {
     ClassNotFound = 0,
     NoSuchField = 1,
@@ -123,7 +122,10 @@ enum ExceptionKind {
     FatalError = 11,
     RuntimeError = 12,
     RowInvalid = 13,
-    BadVersion = 14
+    BadVersion = 15
+    EncryptionNotSupported = 14
+// NOTE!!!!: Please also add test cases to Util.java when introducing a new exception kind.
+>>>>>>> master
 };
 
 void ConvertException(JNIEnv* env, const char *file, int line);
